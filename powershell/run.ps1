@@ -1,0 +1,1 @@
+Start-Process "C:\Program Files (x86)\VMware\VMware Horizon View Client\vmware-view.exe" --serverURL=vdi.paschoalotto.com.br
