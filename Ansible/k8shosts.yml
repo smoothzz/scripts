@@ -1,11 +1,25 @@
 ---
 - name: Install docker and configure for k8s
   hosts: k8shosts
-  become: yes
+  remote_user: vagrant
+
   tasks:
-  - name: Docker repository
+  - name: docker script install
+    become: yes
+    ansible.builtin.script: docker.sh
+
+  - name: Start Docker service and enable
+    become: true
+    ansible.builtin.systemd:
+      name: docker
+      state: started
+      enabled: yes
+
+  - name: kubernetes Repo
+    become: true
     yum_repository:
-      description: Docker Repo
+      name: kubernetes
+      description: Kubernetes Repo
       file: kubernetes
       baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
       enabled: yes
@@ -14,16 +28,18 @@
       gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 
   - name: Disable SELinux
-    ansible.posix.selinux:
-      state: disabled
+    become: true
+    selinux: state=disabled
 
-  - name: Stop and disable firewalld.
+  - name: Stop and disable firewalld
+    become: true
     service:
         name: firewalld
         state: stopped
         enabled: False
 
   - name: Install kubernetes
+    become: true
     yum:
       name: "{{ packages }}"
     vars:
@@ -33,16 +49,18 @@
       - kubectl
 
   - name: Enable and start kubelet
+    become: true
     ansible.builtin.systemd:
       name: kubelet
       state: started
       enabled: yes
 
   - name: Disable swap for current session
-    command: swapoff -a
     become: true
+    command: swapoff -a
 
   - name: Disable swap permanently, persist reboots
+    become: true
     replace:
       path: /etc/fstab
       regexp: '^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'
