@@ -4,6 +4,7 @@
   remote_user: vagrant
 
   tasks:
+  
   - name: docker script install
     become: yes
     ansible.builtin.script: docker.sh
