@@ -8,10 +8,11 @@
       become: yes
       yum:
         name: "{{ packages }}"
-      with_packages:
-      - yum-utils
-      - device-mapper-persistent-data
-      - lvm2
+      vars:
+        packages:
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
     
     - name: docker repository
       become: yes
