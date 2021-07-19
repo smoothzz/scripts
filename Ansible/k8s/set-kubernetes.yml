@@ -22,6 +22,12 @@
         baseurl: https://download.docker.com/linux/centos/docker-ce.repo
         gpgcheck: no
     
+    - name: Update yum
+      become: yes
+      yum:
+        name: '*'
+        state: latest
+
     - name: Install Docker and requirements
       become: yes
       yum:
