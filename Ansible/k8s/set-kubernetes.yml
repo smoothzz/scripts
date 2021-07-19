@@ -14,30 +14,38 @@
         - device-mapper-persistent-data
         - lvm2
     
-    - name: docker repository
-      become: yes
-      yum_repository:
-        name: docker-ce
-        description: docker repo
-        baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
-        gpgcheck: no
-    
-    - name: Install Docker and requirements
-      become: yes
-      yum:
-        name: "{{ packages }}"
-      vars:
-        packages:
-        - containerd.io
-        - docker-ce
-        - docker-ce-cli
+    - name: Check if Docker is installed
+      command: systemctl status docker
+      register: docker_check
+      ignore_errors: yes
 
-    - name: Start Docker service
-      become: yes
-      service:
+    - name: Download the Docker installer
+      get_url:
+        url: https://get.docker.com/
+        dest: /root/install_docker.sh
+        mode: 0700
+      when: docker_check.stderr.find('service could not be found') != -1
+
+    - name: Install Docker
+      shell: /root/install_docker.sh
+      when: docker_check.stderr.find('service could not be found') != -1
+
+    - name: Remove the Docker installer file.
+      file:
+        state: absent
+        path: /root/install_docker.sh
+
+    - name: Enable the Docker daemon in systemd
+      systemd:
+        name: docker
+        enabled: yes
+        masked: no
+
+    - name: Start the Docker daemon
+      systemd:
         name: docker
         state: started
-        enabled: yes
+        masked: no
     
     - name: kubernetes Repo
       become: yes
