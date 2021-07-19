@@ -2,11 +2,11 @@
 - name: Setting enviroment ready for K8S
   hosts: k8s
   remote_user: thiago
-  become_user: root
 
   tasks: 
     - name: docker repository
       become: yes
+      become_user: root
       yum_repository:
         name: docker-ce
         description: docker repo
@@ -15,12 +15,14 @@
     
     - name: Update yum
       become: yes
+      become_user: root
       yum:
         name: '*'
         state: latest
 
     - name: Install Docker and requirements
       become: yes
+      become_user: root
       yum:
         name: "{{ packages }}"
       vars:
@@ -31,6 +33,7 @@
 
     - name: Start Docker service
       become: yes
+      become_user: root
       service:
         name: docker
         state: started
@@ -38,6 +41,7 @@
     
     - name: kubernetes Repo
       become: yes
+      become_user: root
       yum_repository:
         name: kubernetes
         description: Kubernetes Repo
@@ -50,10 +54,12 @@
 
     - name: Disable SELinux
       become: yes
+      become_user: root
       selinux: state=disabled
 
     - name: Stop and disable firewalld
       become: yes
+      become_user: root
       service:
         name: firewalld
         state: stopped
@@ -61,6 +67,7 @@
 
     - name: Install kubernetes
       become: yes
+      become_user: root
       yum:
         name: "{{ packages }}"
       vars:
@@ -71,6 +78,7 @@
 
     - name: Enable and start kubelet
       become: yes
+      become_user: root
       systemd:
         name: kubelet
         state: started
@@ -78,10 +86,12 @@
 
     - name: Disable swap for current session
       become: yes
+      become_user: root
       command: swapoff -a
 
     - name: Disable swap permanently, persist reboots
       become: yes
+      become_user: root
       replace:
         path: /etc/fstab
         regexp: '^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'
