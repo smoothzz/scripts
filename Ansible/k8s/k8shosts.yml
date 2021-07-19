@@ -3,11 +3,9 @@
   remote_user: thiago
 
   tasks:  
-    - name: Transfer the script
-      copy: src=docker.sh dest=/home/thiago mode=0777
-
-    - name: Execute the script
-      command: sh /home/thiago/docker.sh
+    - name: Docker Install
+      become: true
+      ansible.builtin.script: docker.sh
 
     - name: Start Docker service and enable
       become: true
