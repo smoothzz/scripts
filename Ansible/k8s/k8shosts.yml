@@ -1,0 +1,91 @@
+---
+- name: Install docker and configure for k8s
+  hosts: k8s
+  remote_user: thiago        
+
+  tasks:
+    - name: Add Docker repo
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docer-ce.repo
+      become: yes
+
+    - name: Enable Docker Edge repo
+      ini_file:
+        dest: /etc/yum.repos.d/docer-ce.repo
+        section: 'docker-ce-edge'
+        option: enabled
+        value: 0
+      become: yes
+
+    - name: Enable Docker Test repo
+      ini_file:
+        dest: /etc/yum.repos.d/docer-ce.repo
+        section: 'docker-ce-test'
+        option: enabled
+        value: 0
+      become: yes
+
+    - name: Install Docker
+      package:
+        name: docker-ce
+        state: latest
+      become: yes
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      become: yes
+
+    - name: kubernetes Repo
+      yum_repository:
+        name: kubernetes
+        description: Kubernetes Repo
+        file: kubernetes
+        baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        enabled: yes
+        gpgcheck: yes
+        repo_gpgcheck: yes
+        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+      become: true
+    
+    - name: Install kubernetes
+      yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - kubelet
+        - kubeadm
+        - kubectl
+      become: true
+
+    - name: Disable SELinux
+      selinux: state=disabled
+      become: true
+
+    - name: Stop and disable firewalld
+      service:
+          name: firewalld
+          state: stopped
+          enabled: False
+      become: true
+      
+    - name: Start service kubelet, if not started
+      service:
+        name: kubelet
+        state: started
+        enabled: yes
+
+    - name: Disable swap for current session
+      become: true
+      command: swapoff -a
+
+    - name: Disable swap permanently, persist reboots
+      replace:
+        path: /etc/fstab
+        regexp: '^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'
+        replace: '#\1\2\3swap\4'
+        backup: yes
+      become: true
