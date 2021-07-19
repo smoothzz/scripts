@@ -30,7 +30,7 @@
         packages:
         - containerd.io
         - docker-ce
-        - docker-cli
+        - docker-ce-cli
 
     - name: Start Docker service
       become: yes
