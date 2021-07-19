@@ -1,21 +1,38 @@
-- name: Install docker and configure for k8s
+---
+- name: Setting enviroment ready for K8S
   hosts: k8s
   remote_user: thiago
 
-  tasks:  
-    - name: Transfer the script
-      copy: src=docker.sh dest=/home/thiago mode=0777
+  tasks:
+    - name: Installing Docker Prerequisite packages
+      become: yes
+      yum:
+        name: "{{ packages }}"
+      with_packages:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+    
+    - name: docker repository
+      become: yes
+      yum_repository:
+        name: docker-ce
+        baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
+        gpgcheck: no
+    
+    - name: Install Docker
+      become: yes
+      package:
+        name: docker-ce
+        state: present
 
-    - name: Execute the script
-      command: sh /home/thiago/docker.sh
-
-    - name: Start Docker service and enable
-      become: true
-      systemd:
+    - name: Start Docker service
+      become: yes
+      service:
         name: docker
         state: started
         enabled: yes
-
+    
     - name: kubernetes Repo
       become: true
       yum_repository:
