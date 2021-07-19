@@ -3,17 +3,7 @@
   hosts: k8s
   remote_user: thiago
 
-  tasks:
-    - name: Installing Docker Prerequisite packages
-      become: yes
-      yum:
-        name: "{{ packages }}"
-      vars:
-        packages:
-        - yum-utils
-        - device-mapper-persistent-data
-        - lvm2
-    
+  tasks: 
     - name: docker repository
       become: yes
       yum_repository:
