@@ -22,11 +22,15 @@
         baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
         gpgcheck: no
     
-    - name: Install Docker
+    - name: Install Docker and requirements
       become: yes
-      package:
-        name: docker-ce
-        state: present
+      yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - containerd.io
+        - docker-ce
+        - docker-cli
 
     - name: Start Docker service
       become: yes
