@@ -22,18 +22,18 @@
     - name: Download the Docker installer
       get_url:
         url: https://get.docker.com/
-        dest: /root/install_docker.sh
+        dest: /tmp/install_docker.sh
         mode: 0700
       when: docker_check.stderr.find('service could not be found') != -1
 
     - name: Install Docker
-      shell: /root/install_docker.sh
+      shell: /tmp/install_docker.sh
       when: docker_check.stderr.find('service could not be found') != -1
 
     - name: Remove the Docker installer file.
       file:
         state: absent
-        path: /root/install_docker.sh
+        path: /tmp/install_docker.sh
 
     - name: Enable the Docker daemon in systemd
       systemd:
