@@ -27,6 +27,7 @@
       when: docker_check.stderr.find('service could not be found') != -1
 
     - name: Install Docker
+      become: yes
       shell: /tmp/install_docker.sh
       when: docker_check.stderr.find('service could not be found') != -1
 
