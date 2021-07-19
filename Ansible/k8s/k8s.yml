@@ -1,6 +1,6 @@
 - name: Install docker and configure for k8s
   hosts: k8s
-  remote_user: root
+  remote_user: thiago
 
   tasks:  
     - name: Transfer the script
