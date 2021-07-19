@@ -1,45 +1,23 @@
----
 - name: Install docker and configure for k8s
   hosts: k8s
-  remote_user: thiago        
+  remote_user: thiago
 
-  tasks:
-    - name: Add Docker repo
-      get_url:
-        url: https://download.docker.com/linux/centos/docker-ce.repo
-        dest: /etc/yum.repos.d/docer-ce.repo
-      become: yes
+  tasks:  
+    - name: Transfer the script
+      copy: src=docker.sh dest=/home/thiago mode=0777
 
-    - name: Enable Docker Edge repo
-      ini_file:
-        dest: /etc/yum.repos.d/docer-ce.repo
-        section: 'docker-ce-edge'
-        option: enabled
-        value: 0
-      become: yes
+    - name: Execute the script
+      command: sh /home/thiago/docker.sh
 
-    - name: Enable Docker Test repo
-      ini_file:
-        dest: /etc/yum.repos.d/docer-ce.repo
-        section: 'docker-ce-test'
-        option: enabled
-        value: 0
-      become: yes
-
-    - name: Install Docker
-      package:
-        name: docker-ce
-        state: latest
-      become: yes
-
-    - name: Start Docker service
-      service:
+    - name: Start Docker service and enable
+      become: true
+      systemd:
         name: docker
         state: started
         enabled: yes
-      become: yes
 
     - name: kubernetes Repo
+      become: true
       yum_repository:
         name: kubernetes
         description: Kubernetes Repo
@@ -49,9 +27,20 @@
         gpgcheck: yes
         repo_gpgcheck: yes
         gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+    - name: Disable SELinux
       become: true
-    
+      selinux: state=disabled
+
+    - name: Stop and disable firewalld
+      become: true
+      service:
+        name: firewalld
+        state: stopped
+        enabled: False
+
     - name: Install kubernetes
+      become: true
       yum:
         name: "{{ packages }}"
       vars:
@@ -59,21 +48,10 @@
         - kubelet
         - kubeadm
         - kubectl
-      become: true
 
-    - name: Disable SELinux
-      selinux: state=disabled
+    - name: Enable and start kubelet
       become: true
-
-    - name: Stop and disable firewalld
-      service:
-          name: firewalld
-          state: stopped
-          enabled: False
-      become: true
-      
-    - name: Start service kubelet, if not started
-      service:
+      systemd:
         name: kubelet
         state: started
         enabled: yes
@@ -83,9 +61,9 @@
       command: swapoff -a
 
     - name: Disable swap permanently, persist reboots
+      become: true
       replace:
         path: /etc/fstab
         regexp: '^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$'
         replace: '#\1\2\3swap\4'
         backup: yes
-      become: true

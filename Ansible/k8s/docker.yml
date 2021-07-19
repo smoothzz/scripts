@@ -1,0 +1,25 @@
+---
+- name: Install docker on a Centos 7 machine
+  hosts: k8s
+  remote_user: thiago
+  become: yes
+
+  tasks:
+  - name: Install pre-requisite packages
+    yum:
+     name: "{{item}}"
+     state: latest
+    loop:
+     - device-mapper-persistent-data
+     - lvm2
+
+  - name: Add Docker CE repo
+    get_url:
+     url: https://download.docker.com/linux/centos/docker-ce.repo
+     dest: /etc/yum.repos.d/docker-ce.repo
+
+  - name: Install Docker
+    yum: name=docker state=latest
+
+  - name: Start and enable the Docker daemon
+    service: name=docker state=started enabled=yes
