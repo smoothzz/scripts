@@ -1,6 +1,7 @@
 ---
 - name: Setting enviroment ready for K8S
   hosts: k8s
+  remote_user: thiago
 
   tasks: 
     - name: docker repository
