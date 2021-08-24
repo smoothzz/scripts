@@ -8,7 +8,7 @@ function checaLogins {
 	foreach ($User in $Users)
 	{
         $Name = $User.login
-        $aduser = get-aduser -Filter {Name -eq $Name} | Select-Object SamAccountName | select -ExpandProperty 'SamAccountName'
+        $aduser = get-aduser -Filter {employeeid -eq $Name} | Select-Object SamAccountName | select -ExpandProperty 'SamAccountName'
 
         if ($null -eq $aduser) 
         {
