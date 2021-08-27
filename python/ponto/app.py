@@ -11,13 +11,13 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 browser = webdriver.Chrome('./chromedriver.exe')
 
-url = 'http://ponto.paschoalotto.com.br/Relogio'
+url = 'URL'
 
 passwd = getpass.getpass()
 #pause.until(datetime(2020, 12, 7, 18, 1)) #Comando para realizar tarefa agendada
 browser.get(url)
 time.sleep(5)
-browser.find_element_by_id('username').send_keys('41972394835')
+browser.find_element_by_id('username').send_keys('CPF')
 browser.find_element_by_id ('password').send_keys(passwd)
 browser.find_element_by_id('btnLogin').click()
 #time.sleep(5)
