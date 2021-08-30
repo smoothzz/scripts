@@ -1,13 +1,13 @@
 - name: Install docker and configure for k8s
-  hosts: k8s
-  remote_user: thiago
+  hosts: labk8s
+  remote_user: root
 
   tasks:  
     - name: Transfer the script
-      copy: src=docker.sh dest=/home/thiago mode=0777
+      copy: src=docker.sh dest=/tmp mode=0777
 
     - name: Execute the script
-      command: sh /home/thiago/docker.sh
+      command: sh /tmp/docker.sh
 
     - name: Start Docker service and enable
       become: yes
