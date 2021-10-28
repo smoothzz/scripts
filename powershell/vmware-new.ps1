@@ -1,5 +1,5 @@
 mkdir c:\vmware
-$url = "https://download3.vmware.com/software/view/viewclients/CART21FQ2/VMware-Horizon-Client-2006-8.0.0-16531419.exe"
+$url = "https://download3.vmware.com/software/view/viewclients/CART22FQ2/VMware-Horizon-Client-2106-8.3.0-18287501.exe"
 Invoke-WebRequest -Uri $url -OutFile "C:\vmware\vmware-client.exe"
 cd c:\vmware
 Start-Process vmware-client.exe -Wait
