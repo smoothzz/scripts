@@ -22,3 +22,4 @@ spec:
   secretName: selfsigned-cert-tls
   issuerRef:
     name: test-selfsigned
+#kubectl describe certificate -n cert-manager-test
