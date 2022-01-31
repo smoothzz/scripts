@@ -1,0 +1,4 @@
+operator:
+  watchNamespace: "*"
+namespace: mongodb-operator
+createResource: false
