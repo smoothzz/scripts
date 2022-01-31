@@ -49,10 +49,9 @@ kind: Ingress
 metadata:
   name: test-ingress
 spec:
-  # ingressClassName: nginx # use only with k8s version >= 1.18.0
   tls:
   rules:
-  - host: test.nginxingress.com
+  - host: teste.example.app
     http:
       paths:
       - path: /
