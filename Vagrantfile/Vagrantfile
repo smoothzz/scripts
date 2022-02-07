@@ -1,5 +1,7 @@
 machines = {
-  "Broke" => {"memory" => "2048", "cpu" => "2", "ip" => "200", "image" => "centos/8"},
+  "01" => {"memory" => "4096", "cpu" => "4", "ip" => "200", "image" => "generic/ubuntu2004"},
+  "02" => {"memory" => "1024", "cpu" => "1", "ip" => "210", "image" => "generic/ubuntu2004"},
+  "03" => {"memory" => "1024", "cpu" => "1", "ip" => "220", "image" => "generic/ubuntu2004"},
 }
 
 Vagrant.configure("2") do |config|
@@ -12,7 +14,6 @@ Vagrant.configure("2") do |config|
         vb.memory = conf["memory"]
         vb.cpus = conf["cpu"]
       end
-      machine.vm.provision "shell", path: "key.sh"
     end
   end
 end
