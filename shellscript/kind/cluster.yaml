@@ -6,6 +6,7 @@ networking:
 
 nodes:
 - role: control-plane
+  image: kindest/node:v1.21.10
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -20,7 +21,7 @@ nodes:
     hostPort: 443
     protocol: TCP
 - role: worker
-- role: worker
+  image: kindest/node:v1.21.10
 
 
 ## Add more workers here

@@ -24,15 +24,15 @@ KIND_INGRESS_ADDRESS=$(echo $IP_HEX.nip.io)
 # Setting up templates
 # Install and upgrade Helm repositories
 helm repo add projectcalico https://docs.projectcalico.org/charts
-# helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-# helm repo add metallb https://metallb.github.io/metallb
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add metallb https://metallb.github.io/metallb
 helm repo update
 
 # Install Calico and check if it is installed
 helm install calico projectcalico/tigera-operator \
   --namespace calico-system \
   --create-namespace \
-  --version v3.20.0 \
+  --version v3.22.2 \
   --wait
 
 # Install MetalLB and check if it is installed

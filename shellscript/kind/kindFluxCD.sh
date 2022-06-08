@@ -24,8 +24,8 @@ KIND_INGRESS_ADDRESS=$(echo $IP_HEX.nip.io)
 # Setting up templates
 # Install and upgrade Helm repositories
 helm repo add projectcalico https://docs.projectcalico.org/charts
-# helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-# helm repo add metallb https://metallb.github.io/metallb
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add metallb https://metallb.github.io/metallb
 helm repo update
 
 # Install Calico and check if it is installed
@@ -35,47 +35,30 @@ helm install calico projectcalico/tigera-operator \
   --version v3.20.0 \
   --wait
 
-# # Install MetalLB and check if it is installed
-# helm upgrade --install metallb metallb/metallb \
-#   --create-namespace \
-#   --namespace metallb-system \
-#   --set "configInline.address-pools[0].addresses[0]="$KIND_LB_RANGE/32"" \
-#   --set "configInline.address-pools[0].name=default" \
-#   --set "configInline.address-pools[0].protocol=layer2" \
-#   --set controller.nodeSelector.nodeapp=loadbalancer \
-#   --set "controller.tolerations[0].key=node-role.kubernetes.io/master" \
-#   --set "controller.tolerations[0].effect=NoSchedule" \
-#   --set speaker.tolerateMaster=true \
-#   --set speaker.nodeSelector.nodeapp=loadbalancer \
-#   --wait
+# Install MetalLB and check if it is installed
+helm upgrade --install metallb metallb/metallb \
+  --create-namespace \
+  --namespace metallb-system \
+  --set "configInline.address-pools[0].addresses[0]="$KIND_LB_RANGE/32"" \
+  --set "configInline.address-pools[0].name=default" \
+  --set "configInline.address-pools[0].protocol=layer2" \
+  --set controller.nodeSelector.nodeapp=loadbalancer \
+  --set "controller.tolerations[0].key=node-role.kubernetes.io/master" \
+  --set "controller.tolerations[0].effect=NoSchedule" \
+  --set speaker.tolerateMaster=true \
+  --set speaker.nodeSelector.nodeapp=loadbalancer \
+  --wait
 
-# # Install Ingress and check if it is installed
-# helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
-#   --namespace ingress-nginx \
-#   --create-namespace \
-#   --set controller.nodeSelector.nodeapp=loadbalancer \
-#   --set "controller.tolerations[0].key=node-role.kubernetes.io/master" \
-#   --set "controller.tolerations[0].effect=NoSchedule" \
-#   --set podLabels.nodeapp=loadbalancer \
-#   --set "service.annotations.metallb.universe.tf/address-pool=default" \
-#   --set defaultBackend.enabled=true \
-#   --set defaultBackend.image.repository=rafaelperoco/default-backend,defaultBackend.image.tag=1.0.0 \
-#   --set controller.watchIngressWithoutClass=true \
-#   --wait
-
-# # Installation of Flux in the cluster
-# flux install
-
-# # Add GitRepository to make the Kustomization Source
-# flux create source git flux-system \
-#   --url=https://github.com/smoothzz/FluxCD.git \
-#   --branch=main \
-#   --interval=3m
-
-# # Install the Kustomization source
-# flux create kustomization flux-system \
-#   --source=GitRepository/flux-system \
-#   --path="./flux/flux-system" \
-#   --prune=true \
-#   --interval=10m \
-#   --validation=client
+# Install Ingress and check if it is installed
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --create-namespace \
+  --set controller.nodeSelector.nodeapp=loadbalancer \
+  --set "controller.tolerations[0].key=node-role.kubernetes.io/master" \
+  --set "controller.tolerations[0].effect=NoSchedule" \
+  --set podLabels.nodeapp=loadbalancer \
+  --set "service.annotations.metallb.universe.tf/address-pool=default" \
+  --set defaultBackend.enabled=true \
+  --set defaultBackend.image.repository=rafaelperoco/default-backend,defaultBackend.image.tag=1.0.0 \
+  --set controller.watchIngressWithoutClass=true \
+  --wait
