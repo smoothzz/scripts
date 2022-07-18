@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whois-deployment
+  namespace: whois-ns
+  labels:
+    app: whois
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whois
+  template:
+    metadata:
+      labels:
+        app: whois
+    spec:
+      containers:
+      - name: whois
+        image: tiihxp/whois:v3
+        ports:
+        - containerPort: 8080

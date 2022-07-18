@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whois-ingress
+  namespace: whois-ns
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "whois.172.18.0.114.nip.io" 
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/whois"
+        backend:
+          service:
+            name: whois-svc
+            port:
+              number: 80
